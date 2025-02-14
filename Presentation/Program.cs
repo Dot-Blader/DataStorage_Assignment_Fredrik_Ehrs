@@ -9,6 +9,8 @@ var services = new ServiceCollection()
     .AddDbContext<DataContext>(x => x.UseSqlServer())
     .AddScoped<CustomerRepository>()
     .AddScoped<CustomerService>()
+    .AddScoped<UserRepository>()
+    .AddScoped<UserService>()
     .AddScoped<MenuDialogs>()
     .BuildServiceProvider();
 

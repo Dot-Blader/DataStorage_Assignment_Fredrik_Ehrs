@@ -30,10 +30,22 @@ public class CustomerService(CustomerRepository customerRepository)
     }
     public async Task<bool> UpdateCustomerAsync(Customer customer)
     {
-
+        try
+        {
+            var customerEntity = await _customerRepository.GetAsync(x => x.Id == customer.Id);
+            await _customerRepository.UpdateAsync(customerEntity!);
+            return true;
+        }
+        catch { return false; }
     }
     public async Task<bool> DeleteCustomerAsync(int id)
     {
-
+        try
+        {
+            var customerEntity = await _customerRepository.GetAsync(x => x.Id == id);
+            await _customerRepository.DeleteAsync(customerEntity!);
+            return true;
+        }
+        catch { return false; }
     }
 }
