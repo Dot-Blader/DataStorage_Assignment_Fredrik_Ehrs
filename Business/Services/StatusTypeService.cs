@@ -24,7 +24,7 @@ public class StatusTypeService(StatusTypeRepository statusTypeRepository)
         var statusTypeEntity = await _statusTypeRepository.GetAsync(x => x.Id == id);
         return StatusTypeFactory.Create(statusTypeEntity!);
     }
-    public async Task<StatusType?> GetStatusTypeByStatusTypeNameAsync(string name)
+    public async Task<StatusType?> GetStatusTypeByStatusNameAsync(string name)
     {
         var statusTypeEntity = await _statusTypeRepository.GetAsync(x => x.StatusName == name);
         return StatusTypeFactory.Create(statusTypeEntity!);

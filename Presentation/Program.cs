@@ -15,6 +15,8 @@ var services = new ServiceCollection()
     .AddScoped<ProductService>()
     .AddScoped<StatusTypeRepository>()
     .AddScoped<StatusTypeService>()
+    .AddScoped<ProjectRepository>()
+    .AddScoped<ProjectService>()
     .AddScoped<MenuDialogs>()
     .BuildServiceProvider();
 
