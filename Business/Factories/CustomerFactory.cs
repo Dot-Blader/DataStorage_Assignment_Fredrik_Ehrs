@@ -13,6 +13,6 @@ public static class CustomerFactory
     public static Customer? Create(CustomerEntity entity) => entity == null ? null : new()
     {
         Id = entity.Id,
-        CustomerName = entity.CustomerName,
+        CustomerName = entity.CustomerName
     };
 }
