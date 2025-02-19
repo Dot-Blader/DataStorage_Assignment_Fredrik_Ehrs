@@ -33,6 +33,7 @@ public class CustomerService(CustomerRepository customerRepository)
         try
         {
             var customerEntity = await _customerRepository.GetAsync(x => x.Id == customer.Id);
+            customerEntity.CustomerName = customer.CustomerName;
             await _customerRepository.UpdateAsync(customerEntity!);
             return true;
         }

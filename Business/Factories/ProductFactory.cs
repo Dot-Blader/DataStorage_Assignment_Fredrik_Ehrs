@@ -5,8 +5,15 @@ namespace Business.Factories;
 
 public static class ProductFactory
 {
+    public static int id = 0;
+    public static int IdGenerator()
+    {
+        id++;
+        return id;
+    }
     public static ProductEntity? Create(ProductRegistrationForm form) => form == null ? null : new()
     {
+        Id = IdGenerator(),
         ProductName = form.ProductName,
         Price = form.Price
     };

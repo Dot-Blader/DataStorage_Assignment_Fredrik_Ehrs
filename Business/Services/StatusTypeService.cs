@@ -34,6 +34,7 @@ public class StatusTypeService(StatusTypeRepository statusTypeRepository)
         try
         {
             var statusTypeEntity = await _statusTypeRepository.GetAsync(x => x.Id == statusType.Id);
+            statusTypeEntity.StatusName = statusType.StatusName;
             await _statusTypeRepository.UpdateAsync(statusTypeEntity!);
             return true;
         }

@@ -23,11 +23,18 @@ public class UserService(UserRepository userRepository)
         var userEntity = await _userRepository.GetAsync(x => x.Id == id);
         return UserFactory.Create(userEntity!);
     }
+    public async Task<User?> GetUserByNameAsync(string firstName, string lastName)
+    {
+        var userEntity = await _userRepository.GetAsync(x => x.FirstName == firstName && x.LastName == lastName);
+        return UserFactory.Create(userEntity!);
+    }
     public async Task<bool> UpdateUserAsync(User user)
     {
         try
         {
             var userEntity = await _userRepository.GetAsync(x => x.Id == user.Id);
+            userEntity!.FirstName = user.FirstName;
+            userEntity.LastName = user.LastName;
             await _userRepository.UpdateAsync(userEntity!);
             return true;
         }

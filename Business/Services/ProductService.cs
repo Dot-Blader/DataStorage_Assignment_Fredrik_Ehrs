@@ -33,6 +33,8 @@ public class ProductService(ProductRepository productRepository)
         try
         {
             var productEntity = await _productRepository.GetAsync(x => x.Id == product.Id);
+            productEntity!.ProductName = product.ProductName;
+            productEntity.Price = product.Price;
             await _productRepository.UpdateAsync(productEntity!);
             return true;
         }
