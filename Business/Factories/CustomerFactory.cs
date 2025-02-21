@@ -6,15 +6,9 @@ namespace Business.Factories;
 
 public static class CustomerFactory
 {
-    public static int id = 0;
-    public static int IdGenerator()
-    {
-        id++;
-        return id;
-    }
     public static CustomerEntity? Create(CustomerRegistrationForm form) => form == null ? null : new()
     {
-        Id = IdGenerator(),
+        Id = Guid.NewGuid().ToString(),
         CustomerName = form.CustomerName
     };
 

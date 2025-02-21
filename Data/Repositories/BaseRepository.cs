@@ -1,5 +1,6 @@
 ﻿using Data.Contexts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
 
 namespace Data.Repositories;
@@ -9,13 +10,46 @@ public class BaseRepository<TEntity>(DataContext context) where TEntity : class
     protected readonly DataContext _context = context;
     protected DbSet<TEntity> _db = context.Set<TEntity>();
 
-    public async Task AddAsync(TEntity entity)
+    private IDbContextTransaction _transaction = null!;
+
+    #region Transaction Management
+
+    public virtual async Task BeginTransactionAsync()
     {
-        await _db.AddAsync(entity);
-        await _context.SaveChangesAsync();
+        _transaction ??= await _context.Database.BeginTransactionAsync();
+    }
+    public virtual async Task CommitTransactionAsync()
+    {
+        if (_transaction != null)
+        {
+            await _transaction.CommitAsync();
+            await _transaction.DisposeAsync();
+            _transaction = null!;
+        }
+    }
+    public virtual async Task RollbackTransactionAsync()
+    {
+        if (_transaction != null)
+        {
+            await _transaction.RollbackAsync();
+            await _transaction.DisposeAsync();
+            _transaction = null!;
+        }
     }
 
-    public async Task<IEnumerable<TEntity>> GetAsync()
+    #endregion
+
+    public virtual async Task<int> SaveAsync()
+    {
+        return await _context.SaveChangesAsync();
+    }
+
+    public virtual async Task AddAsync(TEntity entity)
+    {
+        await _db.AddAsync(entity);
+    }
+
+    public virtual async Task<IEnumerable<TEntity>> GetAsync()
     {
         var entities = await _db.ToListAsync();
         return entities;
@@ -27,15 +61,13 @@ public class BaseRepository<TEntity>(DataContext context) where TEntity : class
         return entity;
     }
 
-    public async Task UpdateAsync(TEntity entity)
+    public void Update(TEntity entity)
     {
         _db.Update(entity);
-        await _context.SaveChangesAsync();
     }
 
-    public async Task DeleteAsync(TEntity entity)
+    public void Delete(TEntity entity)
     {
         _db.Remove(entity);
-        await _context.SaveChangesAsync();
     }
 }

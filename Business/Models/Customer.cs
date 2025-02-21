@@ -2,7 +2,7 @@
 
 public class Customer
 {
-    public int Id { get; set; }
+    public string Id { get; set; } = null!;
 
     public string CustomerName { get; set; } = null!;
 }

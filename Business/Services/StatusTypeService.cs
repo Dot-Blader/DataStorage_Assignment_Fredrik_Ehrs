@@ -11,15 +11,27 @@ public class StatusTypeService(StatusTypeRepository statusTypeRepository)
 
     public async Task CreateStatusTypeAsync(StatusTypeRegForm form)
     {
-        var statusTypeEntity = StatusTypeFactory.Create(form);
-        await _statusTypeRepository.AddAsync(statusTypeEntity!);
+        await _statusTypeRepository.BeginTransactionAsync();
+
+        try
+        {
+            var statusTypeEntity = StatusTypeFactory.Create(form);
+            await _statusTypeRepository.AddAsync(statusTypeEntity!);
+
+            await _statusTypeRepository.SaveAsync();
+            await _statusTypeRepository.CommitTransactionAsync();
+        }
+        catch
+        {
+            await _statusTypeRepository.RollbackTransactionAsync();
+        }
     }
     public async Task<IEnumerable<StatusType?>> GetStatusTypesAsync()
     {
         var statusTypeEntities = await _statusTypeRepository.GetAsync();
         return statusTypeEntities.Select(StatusTypeFactory.Create)!;
     }
-    public async Task<StatusType?> GetStatusTypeByIdAsync(int id)
+    public async Task<StatusType?> GetStatusTypeByIdAsync(string id)
     {
         var statusTypeEntity = await _statusTypeRepository.GetAsync(x => x.Id == id);
         return StatusTypeFactory.Create(statusTypeEntity!);
@@ -34,18 +46,18 @@ public class StatusTypeService(StatusTypeRepository statusTypeRepository)
         try
         {
             var statusTypeEntity = await _statusTypeRepository.GetAsync(x => x.Id == statusType.Id);
-            statusTypeEntity.StatusName = statusType.StatusName;
-            await _statusTypeRepository.UpdateAsync(statusTypeEntity!);
+            statusTypeEntity!.StatusName = statusType.StatusName;
+            _statusTypeRepository.Update(statusTypeEntity!);
             return true;
         }
         catch { return false; }
     }
-    public async Task<bool> DeleteStatusTypeAsync(int id)
+    public async Task<bool> DeleteStatusTypeAsync(string id)
     {
         try
         {
             var statusTypeEntity = await _statusTypeRepository.GetAsync(x => x.Id == id);
-            await _statusTypeRepository.DeleteAsync(statusTypeEntity!);
+            _statusTypeRepository.Delete(statusTypeEntity!);
             return true;
         }
         catch { return false; }

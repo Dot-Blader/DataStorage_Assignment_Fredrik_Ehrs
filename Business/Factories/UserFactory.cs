@@ -5,15 +5,9 @@ namespace Business.Factories;
 
 public class UserFactory
 {
-    public static int id = 0;
-    public static int IdGenerator()
-    {
-        id++;
-        return id;
-    }
     public static UserEntity? Create(UserRegistrationForm form) => form == null ? null : new()
     {
-        Id = IdGenerator(),
+        Id = Guid.NewGuid().ToString(),
         FirstName = form.FirstName,
         LastName = form.LastName
     };

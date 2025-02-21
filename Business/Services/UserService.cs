@@ -10,15 +10,27 @@ public class UserService(UserRepository userRepository)
 
     public async Task CreateUserAsync(UserRegistrationForm form)
     {
-        var userEntity = UserFactory.Create(form);
-        await _userRepository.AddAsync(userEntity!);
+        await _userRepository.BeginTransactionAsync();
+
+        try
+        {
+            var userEntity = UserFactory.Create(form);
+            await _userRepository.AddAsync(userEntity!);
+
+            await _userRepository.SaveAsync();
+            await _userRepository.CommitTransactionAsync();
+        }
+        catch
+        {
+            await _userRepository.RollbackTransactionAsync();
+        }
     }
     public async Task<IEnumerable<User?>> GetUsersAsync()
     {
         var userEntities = await _userRepository.GetAsync();
         return userEntities.Select(UserFactory.Create)!;
     }
-    public async Task<User?> GetUserByIdAsync(int id)
+    public async Task<User?> GetUserByIdAsync(string id)
     {
         var userEntity = await _userRepository.GetAsync(x => x.Id == id);
         return UserFactory.Create(userEntity!);
@@ -35,17 +47,17 @@ public class UserService(UserRepository userRepository)
             var userEntity = await _userRepository.GetAsync(x => x.Id == user.Id);
             userEntity!.FirstName = user.FirstName;
             userEntity.LastName = user.LastName;
-            await _userRepository.UpdateAsync(userEntity!);
+            _userRepository.Update(userEntity!);
             return true;
         }
         catch { return false; }
     }
-    public async Task<bool> DeleteUserAsync(int id)
+    public async Task<bool> DeleteUserAsync(string id)
     {
         try
         {
             var userEntity = await _userRepository.GetAsync(x => x.Id == id);
-            await _userRepository.DeleteAsync(userEntity!);
+            _userRepository.Delete(userEntity!);
             return true;
         }
         catch { return false; }

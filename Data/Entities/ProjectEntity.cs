@@ -6,7 +6,7 @@ namespace Data.Entities;
 public class ProjectEntity
 {
     [Key]
-    public int Id { get; set; }
+    public string Id { get; set; } = null!;
 
     public string Title { get; set; } = null!;
 
@@ -18,15 +18,15 @@ public class ProjectEntity
     [Column(TypeName = "date")]
     public DateTime EndDate { get; set; }
 
-    public int CustomerId { get; set; }
+    public string CustomerId { get; set; } = null!;
     public CustomerEntity Customer { get; set; } = null!;
 
-    public int StatusId { get; set; }
+    public string StatusId { get; set; } = null!;
     public StatusTypeEntity Status { get; set; } = null!;
 
-    public int UserId { get; set; }
+    public string UserId { get; set; } = null!;
     public UserEntity User { get; set; } = null!;
 
-    public int ProductId { get; set; }
+    public string ProductId { get; set; } = null!;
     public ProductEntity Product { get; set; } = null!;
 }

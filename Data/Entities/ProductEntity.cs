@@ -5,7 +5,7 @@ namespace Data.Entities;
 public class ProductEntity
 {
     [Key]
-    public int Id { get; set; }
+    public string Id { get; set; } = null!;
 
     public string ProductName { get; set; } = null!;
 

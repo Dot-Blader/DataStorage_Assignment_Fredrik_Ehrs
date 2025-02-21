@@ -10,15 +10,27 @@ public class ProductService(ProductRepository productRepository)
 
     public async Task CreateProductAsync(ProductRegistrationForm form)
     {
-        var productEntity = ProductFactory.Create(form);
-        await _productRepository.AddAsync(productEntity!);
+        await _productRepository.BeginTransactionAsync();
+
+        try
+        {
+            var productEntity = ProductFactory.Create(form);
+            await _productRepository.AddAsync(productEntity!);
+
+            await _productRepository.SaveAsync();
+            await _productRepository.CommitTransactionAsync();
+        }
+        catch
+        {
+            await _productRepository.RollbackTransactionAsync();
+        }
     }
     public async Task<IEnumerable<Product?>> GetProductsAsync()
     {
         var productEntities = await _productRepository.GetAsync();
         return productEntities.Select(ProductFactory.Create)!;
     }
-    public async Task<Product?> GetProductByIdAsync(int id)
+    public async Task<Product?> GetProductByIdAsync(string id)
     {
         var productEntity = await _productRepository.GetAsync(x => x.Id == id);
         return ProductFactory.Create(productEntity!);
@@ -35,17 +47,17 @@ public class ProductService(ProductRepository productRepository)
             var productEntity = await _productRepository.GetAsync(x => x.Id == product.Id);
             productEntity!.ProductName = product.ProductName;
             productEntity.Price = product.Price;
-            await _productRepository.UpdateAsync(productEntity!);
+            _productRepository.Update(productEntity!);
             return true;
         }
         catch { return false; }
     }
-    public async Task<bool> DeleteProductAsync(int id)
+    public async Task<bool> DeleteProductAsync(string id)
     {
         try
         {
             var productEntity = await _productRepository.GetAsync(x => x.Id == id);
-            await _productRepository.DeleteAsync(productEntity!);
+            _productRepository.Delete(productEntity!);
             return true;
         }
         catch { return false; }

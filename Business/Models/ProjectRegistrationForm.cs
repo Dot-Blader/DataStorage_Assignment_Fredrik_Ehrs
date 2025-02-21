@@ -13,15 +13,11 @@ public class ProjectRegistrationForm
 
     public DateTime EndDate { get; set; }
 
-    public int CustomerId { get; set; }
-    public CustomerEntity Customer { get; set; } = null!;
+    public string CustomerId { get; set; } = null!;
 
-    public int StatusId { get; set; }
-    public StatusTypeEntity Status { get; set; } = null!;
+    public string StatusId { get; set; } = null!;
 
-    public int UserId { get; set; }
-    public UserEntity User { get; set; } = null!;
+    public string UserId { get; set; } = null!;
 
-    public int ProductId { get; set; }
-    public ProductEntity Product { get; set; } = null!;
+    public string ProductId { get; set; } = null!;
 }
